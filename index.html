@@ -903,9 +903,13 @@ function qualityDots(n) {
     '</div>';
 }
 
+function escAttr(s) {
+  return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 function renderCard(p, idx) {
   return `
-    <div class="card" onclick="copyCard(this, ${JSON.stringify(p.text).replace(/'/g,"&#39;")})">
+    <div class="card" onclick="copyCard(this, ${escAttr(JSON.stringify(p.text))})">
       <div class="card-top">
         <span class="card-tag">Prompt ${String(idx+1).padStart(2,'0')}</span>
         ${qualityDots(p.quality)}
