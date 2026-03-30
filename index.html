@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Library — Expert Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09090b;
+  --surface: #111113;
+  --card: #141416;
+  --card-hover: #1a1a1d;
+  --border: #242428;
+  --border-hover: #38383e;
+  --accent: #f97316;
+  --accent-dim: rgba(249,115,22,0.12);
+  --accent2: #fbbf24;
+  --green: #22c55e;
+  --text: #f4f4f5;
+  --text-mid: #a1a1aa;
+  --text-dim: #52525b;
+  --text-faint: #27272a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Crimson Pro', Georgia, serif;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── Noise texture ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999;
+}
+
+/* ── Layout ── */
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 32px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  padding: 0 24px 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.logo-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.logo-title span { color: var(--accent); }
+
+.logo-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.nav-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 24px 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 24px;
+  cursor: pointer;
+  transition: background 0.12s;
+  border-left: 2px solid transparent;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.nav-item:hover {
+  background: var(--card);
+  color: var(--text);
+}
+
+.nav-item.active {
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.nav-count {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  background: var(--border);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.nav-item.active .nav-count {
+  background: rgba(249,115,22,0.2);
+  color: var(--accent);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px 24px 0;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+  line-height: 1.8;
+}
+
+/* ── Main ── */
+.main {
+  padding: 40px 48px 80px;
+  max-width: 960px;
+}
+
+/* ── Top bar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.search-wrap {
+  flex: 1;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+}
+
+.search-input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 11px 16px 11px 36px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+  letter-spacing: 0.02em;
+}
+
+.search-input::placeholder { color: var(--text-dim); }
+.search-input:focus { border-color: var(--accent); }
+
+.result-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  letter-spacing: 0.06em;
+}
+
+/* ── Section header ── */
+.section-head {
+  margin-bottom: 28px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.section-title em {
+  color: var(--accent);
+  font-style: italic;
+  font-family: 'Crimson Pro', serif;
+  font-weight: 300;
+  font-size: 0.75em;
+  letter-spacing: 0.02em;
+}
+
+.section-desc {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: var(--text-mid);
+  font-style: italic;
+  max-width: 560px;
+  line-height: 1.5;
+}
+
+.section-rule {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0 28px;
+}
+
+/* ── Category block (in "all" view) ── */
+.cat-block { margin-bottom: 60px; }
+
+.cat-block-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cat-block-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.cat-block-title em {
+  font-style: italic;
+  font-family: 'Crimson Pro', serif;
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.cat-block-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: auto;
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  background: var(--card-hover);
+}
+
+.card:hover::before { transform: scaleX(1); }
+
+.card.copied { border-color: var(--green); }
+.card.copied::before { background: var(--green); transform: scaleX(1); }
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--accent-dim);
+  color: var(--accent);
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid rgba(249,115,22,0.2);
+}
+
+.card-quality {
+  display: flex;
+  gap: 2px;
+}
+
+.card-quality span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.card-quality span.filled { background: var(--accent); }
+
+.card-body {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #d4d4d8;
+  font-weight: 300;
+  flex: 1;
+}
+
+.card-body var {
+  font-style: normal;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  color: var(--accent2);
+  background: rgba(251,191,36,0.08);
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid rgba(251,191,36,0.15);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.copy-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  transition: color 0.15s;
+}
+
+.card:hover .copy-label { color: var(--text-dim); }
+.card.copied .copy-label { color: var(--green); }
+
+.copy-btn {
+  width: 26px; height: 26px;
+  background: var(--accent);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.card:hover .copy-btn { transform: scale(1.08); }
+.card.copied .copy-btn { background: var(--green); }
+
+.copy-btn svg {
+  width: 12px; height: 12px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── Category view ── */
+.cat-view { display: none; }
+.cat-view.active { display: block; animation: rise 0.2s ease; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.no-results {
+  grid-column: 1/-1;
+  padding: 60px 0;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 16px; gap: 8px; }
+  .logo { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+  .nav-label, .sidebar-footer { display: none; }
+  .nav-item { padding: 6px 12px; border-left: none; border-bottom: 2px solid transparent; font-size: 0.65rem; }
+  .nav-item.active { border-bottom-color: var(--accent); border-left-color: transparent; }
+  .main { padding: 24px 20px 60px; }
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-title">PROMPT<span>.</span>OS</div>
+      <div class="logo-sub">Expert Edition · v2</div>
+    </div>
+
+    <div class="nav-label">Categories</div>
+
+    <div class="nav-item active" onclick="switchCat('all', this)">
+      All Prompts <span class="nav-count">56</span>
+    </div>
+    <div class="nav-item" onclick="switchCat('thinking', this)">
+      Strategic Thinking <span class="nav-count">8</span>
+    </div>
+    <div class="nav-item" onclick="switchCat('business', this)">
+      Business Ops <span class="nav-count">8</span>
+    </div>
+    <div class="nav-item" onclick="switchCat('pm', this)">
+      PM · AI Direction <span class="nav-count">8</span>
+    </div>
+    <div class="nav-item" onclick="switchCat('coding', this)">
+      Code &amp; Debug <span class="nav-count">8</span>
+    </div>
+    <div class="nav-item" onclick="switchCat('writing', this)">
+      Writing &amp; Voice <span class="nav-count">8</span>
+    </div>
+    <div class="nav-item" onclick="switchCat('productivity', this)">
+      Systems &amp; Flow <span class="nav-count">8</span>
+    </div>
+    <div class="nav-item" onclick="switchCat('growth', this)">
+      Growth &amp; Revenue <span class="nav-count">8</span>
+    </div>
+
+    <div class="sidebar-footer">
+      Click any card to copy<br>
+      [VARS] = your inputs<br>
+      All prompts expert-grade
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input class="search-input" type="text" id="searchInput" placeholder="Search prompts..." oninput="handleSearch()">
+      </div>
+      <span class="result-count" id="resultCount">56 prompts</span>
+    </div>
+
+    <div id="viewContainer"></div>
+  </main>
+
+</div>
+
+<script>
+const CATS = {
+  thinking: {
+    label: "Strategic Thinking",
+    italic: "& Decision-Making",
+    desc: "Force structured reasoning. These prompts make Claude think like a strategist, not a summarizer.",
+    prompts: [
+      {
+        title: "Steel Man Stress Test",
+        quality: 5,
+        text: "I'm about to make this decision: [DECISION]. Before I commit, steelman the strongest possible case AGAINST it — not weak objections, the most credible version of why this is wrong. Then steelman the case FOR it with the same rigor. End with the single most important uncertainty that should change my mind if resolved either way. Don't hedge. Be direct.",
+        vars: ["DECISION"]
+      },
+      {
+        title: "Second-Order Consequence Map",
+        quality: 5,
+        text: "Map the second and third-order consequences of [ACTION/DECISION]. First-order: what happens immediately. Second-order: what does that cause 3–6 months out. Third-order: what does THAT cause in 1–2 years. Flag which consequences are reversible vs permanent, and which are most commonly overlooked by people making this decision.",
+        vars: ["ACTION/DECISION"]
+      },
+      {
+        title: "Inversion Problem Solver",
+        quality: 4,
+        text: "I want to achieve [GOAL]. Instead of asking how to succeed, help me use inversion: what are all the ways I could guarantee failure? List the top 10 failure modes, ranked by likelihood. Then for each, write one concrete action I can take this week to eliminate or reduce that risk.",
+        vars: ["GOAL"]
+      },
+      {
+        title: "Pre-Mortem Analysis",
+        quality: 5,
+        text: "It's [TIMEFRAME] from now. My plan — [PLAN] — has failed badly. The outcome was [WORST CASE]. Write a detailed post-mortem from that future: exactly what went wrong, what warning signs were ignored, what assumptions proved false. Write it in past tense as if it already happened. Then give me the 3 interventions that would have prevented it.",
+        vars: ["TIMEFRAME", "PLAN", "WORST CASE"]
+      },
+      {
+        title: "Mental Model Diagnosis",
+        quality: 4,
+        text: "I'm stuck on this problem: [PROBLEM]. Apply these 5 mental models one by one — first principles, inversion, Occam's razor, Hanlon's razor, map vs territory — and show what each reveals that I'm probably missing. End with a synthesis: what's the most likely real reason I'm stuck, and the clearest path through it?",
+        vars: ["PROBLEM"]
+      },
+      {
+        title: "Competing Hypotheses Matrix",
+        quality: 4,
+        text: "I'm trying to understand why [SITUATION] is happening. Generate 5 competing hypotheses, from most to least obvious. For each, list the evidence that supports it, evidence that contradicts it, and one diagnostic test I can run this week to confirm or rule it out. Which hypothesis should I test first and why?",
+        vars: ["SITUATION"]
+      },
+      {
+        title: "Strategic Options Expansion",
+        quality: 4,
+        text: "I think my only options for [PROBLEM/OPPORTUNITY] are [OPTION A] and [OPTION B]. I'm probably wrong — I'm in a false binary. Generate 6 genuinely different options I haven't considered: different in kind, not just in degree. For each, explain what assumption it breaks and what it would require of me. Which one is most underrated?",
+        vars: ["PROBLEM/OPPORTUNITY", "OPTION A", "OPTION B"]
+      },
+      {
+        title: "Conviction vs. Consensus Audit",
+        quality: 3,
+        text: "Here's a belief I hold strongly about [DOMAIN]: [BELIEF]. Audit this belief. What's the consensus view among experts? Where does my belief agree with consensus and where does it diverge? For each divergence, am I contrarian because of genuine insight or because of a bias or limited data set? Be brutally honest. What would it take to change my view?",
+        vars: ["DOMAIN", "BELIEF"]
+      }
+    ]
+  },
+  business: {
+    label: "Business Operations",
+    italic: "& Finance",
+    desc: "For operators running real companies. Prompts that generate usable frameworks, not generic advice.",
+    prompts: [
+      {
+        title: "Cash Flow Stress Test",
+        quality: 5,
+        text: "Here's my current financial position: [CASH BALANCE, AR, AP, MONTHLY BURN, UPCOMING OBLIGATIONS]. Run a 90-day cash stress test under 3 scenarios: base case, 30% revenue shortfall, and a supplier/logistics disruption. For each scenario, show week-by-week cash position, the exact week I hit danger, and the 2–3 levers I should pull first. Flag any single-point-of-failure assumptions.",
+        vars: ["CASH BALANCE, AR, AP, MONTHLY BURN, UPCOMING OBLIGATIONS"]
+      },
+      {
+        title: "Supplier Negotiation Prep",
+        quality: 5,
+        text: "I'm negotiating with [SUPPLIER] for [PRODUCT/SERVICE]. My current terms: [CURRENT TERMS]. My leverage points: [LEVERAGE]. Their likely interests: [WHAT THEY WANT]. Prepare me with: the opening position I should take, the 3 concessions I can offer that cost me little but are valuable to them, the red lines I should never cross, and the exact language for the 2 most important asks. Include how to handle their most likely pushback.",
+        vars: ["SUPPLIER", "PRODUCT/SERVICE", "CURRENT TERMS", "LEVERAGE", "WHAT THEY WANT"]
+      },
+      {
+        title: "Unit Economics Breakdown",
+        quality: 5,
+        text: "Help me build unit economics for [PRODUCT/SERVICE LINE]. Revenue per unit: [PRICE]. Variable costs: [COGS BREAKDOWN]. My fixed overhead to allocate: [FIXED COSTS]. Walk me through: gross margin, contribution margin, break-even volume, and how the economics change at 2x and 5x volume. Flag which cost line has the highest leverage for improving margin. Show formulas, not just numbers.",
+        vars: ["PRODUCT/SERVICE LINE", "PRICE", "COGS BREAKDOWN", "FIXED COSTS"]
+      },
+      {
+        title: "Org Design Audit",
+        quality: 4,
+        text: "My team structure is: [CURRENT ORG CHART / ROLE DESCRIPTIONS]. We're experiencing: [FRICTION POINTS — delays, rework, unclear ownership]. Audit the structure against the work we actually do. Identify: where accountability is unclear, where one person is a bottleneck, where we have redundancy, and what role or process change would have the highest impact. Give me a proposed org chart and the change I should make first.",
+        vars: ["CURRENT ORG CHART / ROLE DESCRIPTIONS", "FRICTION POINTS"]
+      },
+      {
+        title: "Pricing Strategy Rebuild",
+        quality: 4,
+        text: "I sell [PRODUCT/SERVICE] currently priced at [CURRENT PRICE]. My cost base is [COST]. Competitors charge [COMPETITOR PRICING]. My best customers' perceived value is [VALUE SIGNALS]. Analyze my pricing using 3 frameworks: cost-plus, competitive, and value-based. Where am I leaving money on the table? Design a pricing architecture — including any tier or bundle structure — that captures more value without losing my best customers.",
+        vars: ["PRODUCT/SERVICE", "CURRENT PRICE", "COST", "COMPETITOR PRICING", "VALUE SIGNALS"]
+      },
+      {
+        title: "SOPs From Scratch",
+        quality: 4,
+        text: "I need a Standard Operating Procedure for [PROCESS]. The person who'll follow this has [SKILL LEVEL]. The process currently takes [TIME] and the main failure modes are [WHAT GOES WRONG]. Write a complete SOP: objective, scope, step-by-step procedure with decision points called out, quality checks at each critical step, and a checklist at the end. Flag any step that requires judgment and write guidance for the most common judgment calls.",
+        vars: ["PROCESS", "SKILL LEVEL", "TIME", "WHAT GOES WRONG"]
+      },
+      {
+        title: "Competitor Moat Analysis",
+        quality: 3,
+        text: "My business: [BRIEF DESCRIPTION]. Main competitors: [COMPETITORS]. Analyze each competitor's moat — what specifically makes them hard to displace (network effects, switching costs, brand, cost structure, relationships, regulatory). Then honestly rate my own moat on the same dimensions. Where am I genuinely stronger? Where am I vulnerable? What's the single most important moat I should be building right now?",
+        vars: ["BRIEF DESCRIPTION", "COMPETITORS"]
+      },
+      {
+        title: "KPI Audit & Redesign",
+        quality: 4,
+        text: "We currently track these metrics: [CURRENT KPIs]. Our business goal is [GOAL]. Audit these KPIs: which are lagging indicators vs leading indicators, which ones could be gamed without improving the underlying reality, and which important things are we NOT measuring. Then propose a cleaner dashboard of no more than 6 KPIs — the ones that, if improved, would guarantee we hit [GOAL]. Explain the causal logic connecting each KPI to the goal.",
+        vars: ["CURRENT KPIs", "GOAL"]
+      }
+    ]
+  },
+  pm: {
+    label: "PM · AI Direction",
+    italic: "& Product Thinking",
+    desc: "For PMs who direct AI to build — not write code themselves. Get Claude to think, plan, and execute precisely.",
+    prompts: [
+      {
+        title: "Feature Requirements Doc",
+        quality: 5,
+        text: "Write a complete requirements document for [FEATURE]. Include: problem statement (why this matters), user stories in 'As a [role], I want [action] so that [outcome]' format, acceptance criteria for each story, edge cases and failure states to handle, data model changes required, API endpoints needed, and open questions that need decisions before building. Write it so a developer can start immediately without clarification.",
+        vars: ["FEATURE"]
+      },
+      {
+        title: "Technical Spec from Plain English",
+        quality: 5,
+        text: "I want to build [FEATURE DESCRIPTION IN PLAIN ENGLISH]. My tech stack is [STACK]. Convert this into a technical specification: break it into implementation tasks, ordered by dependency (what must be built first). For each task: what it does, inputs/outputs, potential gotchas, and estimated complexity (S/M/L). Flag any task where my description is ambiguous and suggest a default decision for each ambiguity.",
+        vars: ["FEATURE DESCRIPTION IN PLAIN ENGLISH", "STACK"]
+      },
+      {
+        title: "Claude Code CLAUDE.md Generator",
+        quality: 5,
+        text: "Act as a senior architect reviewing my project. My codebase is [TECH STACK]. My project does: [PURPOSE]. Key patterns we use: [PATTERNS]. Common tasks: [TYPICAL TASKS]. Generate a complete CLAUDE.md file that will make every future Claude Code session 10x more productive. Include: project overview, architectural decisions and why, file structure conventions, naming rules, code patterns with examples, what NOT to do, and the context a new session needs before touching any file.",
+        vars: ["TECH STACK", "PURPOSE", "PATTERNS", "TYPICAL TASKS"]
+      },
+      {
+        title: "Task Decomposition & Sequencing",
+        quality: 5,
+        text: "I want to build [PROJECT/FEATURE]. Break this into the smallest possible discrete tasks — each completable in one focused AI session. Group by phase. Show dependencies as a simple graph (what blocks what). Identify the critical path — the sequence where a delay ripples. Flag any task that requires a decision from me before the AI can proceed, and write the exact question I need to answer for each. Output as a numbered list I can paste into Notion.",
+        vars: ["PROJECT/FEATURE"]
+      },
+      {
+        title: "Prompt Engineering for Specific Output",
+        quality: 4,
+        text: "I need to get Claude to reliably produce [DESIRED OUTPUT] for [USE CASE]. The current prompt I'm using is: [CURRENT PROMPT]. Diagnose what's causing inconsistent or poor results. Then rewrite the prompt using best practices: clear role, explicit format, constraints, examples (few-shot if helpful), and a chain-of-thought instruction where useful. Explain each change you made and why it will improve reliability.",
+        vars: ["DESIRED OUTPUT", "USE CASE", "CURRENT PROMPT"]
+      },
+      {
+        title: "User Story Prioritization",
+        quality: 4,
+        text: "Here are the features/stories in my backlog: [BACKLOG LIST]. My core user is [USER DESCRIPTION]. My primary business goal right now is [GOAL]. Prioritize this backlog using RICE scoring (Reach, Impact, Confidence, Effort). Show the score for each item and the final ranking. Flag any item that is a prerequisite for others (dependency tax). Tell me the one item that, if shipped, would most change what users say about the product.",
+        vars: ["BACKLOG LIST", "USER DESCRIPTION", "GOAL"]
+      },
+      {
+        title: "API Design Review",
+        quality: 4,
+        text: "Review this API design: [API ROUTES / SCHEMA]. Check against REST best practices: naming conventions, HTTP method correctness, response structure consistency, error handling patterns, pagination approach, and versioning. Flag every inconsistency. Then write the corrected API spec in a clean table. Also identify any missing endpoints that the client will obviously need but that aren't here yet.",
+        vars: ["API ROUTES / SCHEMA"]
+      },
+      {
+        title: "Build vs. Buy vs. Automate",
+        quality: 3,
+        text: "I need [CAPABILITY] for my [TYPE OF APP]. Options I'm considering: [OPTIONS]. Evaluate each against: build time, ongoing maintenance burden, cost at my current scale, cost at 10x scale, lock-in risk, and how well it fits my existing stack [STACK]. Give a clear recommendation with reasoning. If 'build', estimate the scope. If 'buy', name the best 2–3 tools. If 'automate with AI', write the prompt architecture.",
+        vars: ["CAPABILITY", "TYPE OF APP", "OPTIONS", "STACK"]
+      }
+    ]
+  },
+  coding: {
+    label: "Code & Debug",
+    italic: "& Architecture",
+    desc: "Production-grade prompts for code review, debugging, refactoring, and system design.",
+    prompts: [
+      {
+        title: "Hostile Code Review",
+        quality: 5,
+        text: "You are a senior engineer who has zero tolerance for code that will cause problems in production. Review this code: [CODE]. Tear it apart. Find every: performance issue, security vulnerability, edge case that will break, readability problem, and architectural smell. Don't soften feedback. For each issue, explain the real-world consequence (what fails, when, at what scale) and show the fixed code. End with a severity-ranked list.",
+        vars: ["CODE"]
+      },
+      {
+        title: "Production Bug Deep Dive",
+        quality: 5,
+        text: "This error is happening in production: [ERROR + STACK TRACE]. It cannot be reproduced locally. Walk me through a structured diagnosis: list 8 possible root causes ranked by likelihood, the exact log lines or metrics I should look at to confirm each, environment differences to check (env vars, versions, infra config), and a logging/monitoring change to add RIGHT NOW so this can't hide again. End with the fix for the most likely cause.",
+        vars: ["ERROR + STACK TRACE"]
+      },
+      {
+        title: "Refactor for Maintainability",
+        quality: 5,
+        text: "This code works but no one can maintain it: [CODE]. Refactor it. Goals: extract pure functions, eliminate hidden side effects, add TypeScript types, improve naming so the code reads like prose, and reduce cognitive load. Show the before/after diff. Explain every structural decision. Also write 3 unit tests for the refactored version — specifically testing the edge cases the original code handles poorly.",
+        vars: ["CODE"]
+      },
+      {
+        title: "Database Schema Review",
+        quality: 5,
+        text: "Review this database schema: [SCHEMA]. My app type is [TYPE] with expected scale [SCALE]. Identify every: missing index (and why it matters for query patterns), N+1 risk (with the exact query that triggers it), normalization issue, and column that will cause problems at scale. For each issue, write the exact SQL to fix it. Then rank the fixes by urgency: what do I fix today vs next sprint?",
+        vars: ["SCHEMA", "TYPE", "SCALE"]
+      },
+      {
+        title: "Error Handling Architecture",
+        quality: 4,
+        text: "I'm building error handling for [APP TYPE] using [STACK]. My current approach is: [CURRENT APPROACH]. Design a complete error handling architecture: error taxonomy (classes of errors with codes), user-facing messages vs internal logs, retry logic with backoff for transient failures, graceful degradation patterns, Sentry integration points, and alert thresholds. Write the base error class and 3 concrete subclasses as working code.",
+        vars: ["APP TYPE", "STACK", "CURRENT APPROACH"]
+      },
+      {
+        title: "Security Audit",
+        quality: 5,
+        text: "Audit this code for security vulnerabilities: [CODE/API ROUTE]. Check specifically: SQL injection vectors, XSS attack surfaces, CSRF gaps, authentication bypass possibilities, insecure direct object references, rate limiting gaps, sensitive data exposure in responses or logs, and dependency risks. For each vulnerability found: explain the attack vector (how would an attacker exploit this?), severity (Critical/High/Medium/Low), and the exact code fix.",
+        vars: ["CODE/API ROUTE"]
+      },
+      {
+        title: "Test Suite Generation",
+        quality: 4,
+        text: "Generate a complete test suite for this function/module: [CODE]. Cover: happy path (expected inputs), boundary values (empty, null, max), error states (what should throw/reject), edge cases unique to this logic, and integration with its dependencies (mock strategy for each). Use [TEST FRAMEWORK] with describe/it structure and clear test names that read as documentation. Write tests that would catch the 3 most likely bugs in this code.",
+        vars: ["CODE", "TEST FRAMEWORK"]
+      },
+      {
+        title: "Zero-Downtime Migration Plan",
+        quality: 4,
+        text: "I need to migrate from [OLD TECH/SCHEMA] to [NEW TECH/SCHEMA] in production with zero downtime. My current traffic pattern is [TRAFFIC]. Build a phased migration plan: each phase as a discrete deploy, what runs in parallel during transition, feature flags needed, rollback trigger (what metric means abort), and the runbook for migration day. Flag every assumption that, if wrong, would require aborting.",
+        vars: ["OLD TECH/SCHEMA", "NEW TECH/SCHEMA", "TRAFFIC"]
+      }
+    ]
+  },
+  writing: {
+    label: "Writing & Voice",
+    italic: "& Communication",
+    desc: "Make AI writing sound like you. High-signal communication that respects the reader's time.",
+    prompts: [
+      {
+        title: "Voice Extraction & Card",
+        quality: 5,
+        text: "Analyze these writing samples from me: [5–10 SAMPLES]. Extract my voice fingerprint: sentence rhythm, average sentence length, how I open paragraphs, how I use punctuation expressively, words I overuse, words I never use, my relationship to formality, how I signal uncertainty vs confidence. Format this as a Voice Card I can paste into any future prompt. Include 5 example rewrites: generic AI text → in my voice.",
+        vars: ["5–10 SAMPLES"]
+      },
+      {
+        title: "AI Text Humanizer",
+        quality: 5,
+        text: "Rewrite this AI-generated text to sound like a human wrote it: [TEXT]. Specific instructions: break up any sentence over 25 words, remove all filler openers ('Certainly', 'Great question', 'It's worth noting'), add 1–2 contractions per paragraph, replace abstract nouns with concrete verbs, vary the sentence openings (no two consecutive sentences starting the same way). Show a diff of every change and explain why each one matters.",
+        vars: ["TEXT"]
+      },
+      {
+        title: "High-Stakes Email",
+        quality: 5,
+        text: "Write an email for this situation: [SITUATION]. My goal: [WHAT I WANT TO HAPPEN]. My relationship with the recipient: [RELATIONSHIP]. What I must not say: [CONSTRAINTS]. Write 2 versions — direct and diplomatic — with the subject line, opening hook, the core ask made once and clearly, and the exact close that makes it easy for them to say yes. Flag any sentence in either version that could backfire.",
+        vars: ["SITUATION", "WHAT I WANT TO HAPPEN", "RELATIONSHIP", "CONSTRAINTS"]
+      },
+      {
+        title: "Argument Strengthening",
+        quality: 4,
+        text: "Here is an argument I'm making: [ARGUMENT]. Strengthen it. First, find the 3 weakest points — the places where a skeptical reader will disengage or push back. For each weak point, give me the stronger version with better evidence, tighter logic, or more precise language. Then find any unsupported assertions I'm making and either give me the supporting evidence or tell me to remove the claim. Preserve my voice.",
+        vars: ["ARGUMENT"]
+      },
+      {
+        title: "Executive Summary Generator",
+        quality: 4,
+        text: "Summarize this document/situation: [CONTENT] for [AUDIENCE — e.g., a busy decision-maker who will read for 90 seconds]. Format: 1-sentence headline (what happened/what I recommend), 3-bullet context (only what they need), recommendation or key decision (clear and direct), one risk to flag. No jargon, no hedging, no padding. If I'm asking for a decision, make the ask explicit in the last line.",
+        vars: ["CONTENT", "AUDIENCE"]
+      },
+      {
+        title: "LinkedIn Post (No Cringe)",
+        quality: 4,
+        text: "Write a LinkedIn post about [TOPIC/EXPERIENCE]. Rules: first sentence must be a specific observation or moment — no 'I'm excited to share'. No bullet-point lists. No 'hot take:'. No 'here's what I learned:'. Write in first person, past tense for story, present tense for insight. Under 180 words. The post should make one sharp point, not three soft ones. End with a real question, not a rhetorical one. Show me 2 alternative opening lines.",
+        vars: ["TOPIC/EXPERIENCE"]
+      },
+      {
+        title: "Feedback That Actually Helps",
+        quality: 3,
+        text: "I need to give feedback to [PERSON/ROLE] about [ISSUE]. Context: [WHAT HAPPENED, PATTERN, IMPACT]. My goal: change the behavior, not damage the relationship. Write feedback using SBI (Situation, Behavior, Impact) structure. Make it specific, not general. Include what I want instead, not just what I don't want. Give me the opening line — the hardest part — and the response to their most likely defensive reaction.",
+        vars: ["PERSON/ROLE", "ISSUE", "WHAT HAPPENED, PATTERN, IMPACT"]
+      },
+      {
+        title: "Content Repurposing Engine",
+        quality: 3,
+        text: "Here is one piece of long-form content: [CONTENT]. Repurpose it into: a 280-character tweet (one sharp idea), a 5-tweet thread (hook + 3 insights + CTA), a LinkedIn post under 200 words, and a 3-bullet email newsletter section. For each format, match the platform's native tone — Twitter is punchy, LinkedIn is professional-personal, email is direct. Don't just cut and paste — reframe for each context.",
+        vars: ["CONTENT"]
+      }
+    ]
+  },
+  productivity: {
+    label: "Systems & Flow",
+    italic: "& Deep Work",
+    desc: "Design systems that run without willpower. Prompts that build durable operating rhythms.",
+    prompts: [
+      {
+        title: "Weekly Operating System",
+        quality: 5,
+        text: "Design a weekly operating system for someone with these roles/responsibilities: [ROLES]. Energy pattern: [HIGH/LOW ENERGY TIMES]. Constraints: [FIXED COMMITMENTS]. Goals this quarter: [GOALS]. Build a full weekly template: time blocks by day, batch-processing days for specific work types, one protected deep work block that cannot be scheduled over, context-switching buffers, and a Friday shutdown ritual. Explain the logic behind each structural decision.",
+        vars: ["ROLES", "HIGH/LOW ENERGY TIMES", "FIXED COMMITMENTS", "GOALS"]
+      },
+      {
+        title: "Task List to Execution Plan",
+        quality: 5,
+        text: "Convert this task list into a 7-day execution plan: [TASKS]. For each task: assign a day, estimate time realistically (not optimistically), flag dependencies (task B can't start until task A is done), and mark which can be delegated or AI-assisted. Identify the single task that unblocks the most other tasks — that goes to day 1. Add 20% buffer time. Output as a clean daily plan I can copy into my calendar.",
+        vars: ["TASKS"]
+      },
+      {
+        title: "Procrastination Diagnosis",
+        quality: 5,
+        text: "I've been avoiding [TASK/PROJECT] for [TIME PERIOD]. Don't give me motivational advice. Diagnose the real reason using the 5 procrastination root causes: unclear next action, fear of failure/judgment, task aversion (it's genuinely unpleasant), perfectionism trap, or energy mismatch. Which one applies here, and how can you tell? Then give me one micro-action under 10 minutes that breaks the avoidance pattern for this specific task — not a general tip.",
+        vars: ["TASK/PROJECT", "TIME PERIOD"]
+      },
+      {
+        title: "AI Automation Audit",
+        quality: 5,
+        text: "Here are my recurring work tasks: [TASK LIST]. My current tools: [TOOLS]. Identify every task that can be automated or AI-assisted. For each: the exact automation approach, the tool to use, estimated setup time, and hours saved per week. Rank by ROI (hours saved ÷ setup time). Focus on high-frequency, low-complexity tasks first. For the top 3, write me the prompt or workflow I need to implement it today.",
+        vars: ["TASK LIST", "TOOLS"]
+      },
+      {
+        title: "Decision Fatigue Eliminator",
+        quality: 4,
+        text: "I make too many small decisions every day. Here are the categories where I notice decision fatigue: [CATEGORIES]. For each category, design a default rule or decision tree that I can follow without thinking. The rule should cover 90% of cases automatically and be simple enough to remember. For the remaining 10%, give me the 2–3 criteria that determine the exception. The goal: zero cognitive load on these categories.",
+        vars: ["CATEGORIES"]
+      },
+      {
+        title: "Notion Workspace Architecture",
+        quality: 4,
+        text: "Design a Notion workspace for someone who is [ROLE] with these projects: [PROJECTS] and these recurring processes: [PROCESSES]. Build the database schema (tables, properties, relationships), the dashboard structure, the weekly review template, and the capture-to-action workflow. Explain every design decision. Flag where people typically over-engineer Notion and how to avoid it for my specific use case.",
+        vars: ["ROLE", "PROJECTS", "PROCESSES"]
+      },
+      {
+        title: "Energy Audit & Calendar Redesign",
+        quality: 3,
+        text: "Here is my current typical week: [SCHEDULE]. Here is when I feel most/least energized: [ENERGY PATTERN]. Audit my calendar against my energy: what high-cognitive work is scheduled in low-energy time? What low-value activities are eating prime hours? Redesign my week so the most important work matches peak energy. Flag every meeting that could be an async update instead.",
+        vars: ["SCHEDULE", "ENERGY PATTERN"]
+      },
+      {
+        title: "Goal to Weekly Action Bridge",
+        quality: 4,
+        text: "My 90-day goal is: [GOAL]. The gap between where I am now and that goal: [CURRENT STATE vs TARGET]. Build the bridge: break the goal into monthly milestones, then weekly actions, then a single next-step for this week. For each level, include the leading indicator that tells me I'm on track — not a lagging metric. Make the weekly actions small enough that I can do them even in a bad week.",
+        vars: ["GOAL", "CURRENT STATE vs TARGET"]
+      }
+    ]
+  },
+  growth: {
+    label: "Growth & Revenue",
+    italic: "& Scale",
+    desc: "Revenue-focused prompts for operators and builders. Convert strategy into pipeline and profit.",
+    prompts: [
+      {
+        title: "Revenue Leak Audit",
+        quality: 5,
+        text: "Here are my revenue streams: [STREAMS WITH ROUGH NUMBERS]. Audit for leakage: where am I undercharging relative to value delivered, where am I losing customers I should be keeping, where are there obvious upsell/cross-sell moments I'm not capturing, and what's my average order value vs what it could be? Prioritize the top 3 leaks by revenue impact. For each, give me a specific intervention — pricing change, email sequence, or process fix.",
+        vars: ["STREAMS WITH ROUGH NUMBERS"]
+      },
+      {
+        title: "Customer Objection Handbook",
+        quality: 5,
+        text: "My product/service: [DESCRIPTION]. Price: [PRICE]. Target customer: [CUSTOMER]. List the 10 real objections customers have before buying — not the polite ones, the real hesitations they don't always say. For each objection: the underlying fear (not just the surface objection), a one-sentence reframe, a proof point that neutralizes it, and where in the sales process to address it proactively. Format as a handbook I can train a salesperson with.",
+        vars: ["DESCRIPTION", "PRICE", "CUSTOMER"]
+      },
+      {
+        title: "Positioning Sharpener",
+        quality: 5,
+        text: "My product: [PRODUCT]. Current positioning: [HOW I CURRENTLY DESCRIBE IT]. Competitors: [COMPETITORS AND THEIR POSITIONING]. My best customers: [WHO THEY ARE, WHAT THEY CARE ABOUT]. Sharpen my positioning: what's the category I should own, what's the unique mechanism that makes my approach different (not just better), and what's the enemy/villain my positioning should position against. Write 3 headline options and a 2-sentence positioning statement.",
+        vars: ["PRODUCT", "HOW I CURRENTLY DESCRIBE IT", "COMPETITORS AND THEIR POSITIONING", "WHO THEY ARE, WHAT THEY CARE ABOUT"]
+      },
+      {
+        title: "Retention Intervention System",
+        quality: 4,
+        text: "My customer/client retention situation: [CURRENT CHURN RATE, TYPICAL REASON FOR LEAVING, CUSTOMER LIFECYCLE]. Design a retention intervention system: the leading indicators that a customer is about to churn (before they tell you), the trigger-based touchpoints to deploy at each signal, and the save offer for customers who are already leaving. For each touchpoint, write the exact message. What's the single highest-ROI retention lever for my situation?",
+        vars: ["CURRENT CHURN RATE, TYPICAL REASON FOR LEAVING, CUSTOMER LIFECYCLE"]
+      },
+      {
+        title: "Outbound Sequence Builder",
+        quality: 4,
+        text: "Write a 4-touch outbound sequence for [PRODUCT/SERVICE] targeting [SPECIFIC BUYER PERSONA]. Sequence: email 1 (relevance hook — why them, why now), email 2 (social proof + one specific insight for their situation), LinkedIn touchpoint (25 words, no pitch), email 3 (direct ask with lowest possible friction). For each touch: subject line, body under 100 words, the psychological principle at work, and the one thing that will make them delete it without reading.",
+        vars: ["PRODUCT/SERVICE", "SPECIFIC BUYER PERSONA"]
+      },
+      {
+        title: "LTV Model Builder",
+        quality: 4,
+        text: "Help me build a customer lifetime value model for [BUSINESS TYPE]. Inputs: average order value [AOV], purchase frequency [FREQ], average customer lifespan [LIFESPAN], gross margin [MARGIN], referral rate [REFERRALS]. Calculate: simple LTV, margin-adjusted LTV, LTV including referral value. Then show me how LTV changes if I improve each input by 20%. Which lever has the highest impact? What's the maximum I should spend to acquire a customer?",
+        vars: ["BUSINESS TYPE", "AOV", "FREQ", "LIFESPAN", "MARGIN", "REFERRALS"]
+      },
+      {
+        title: "Partnership Deal Structure",
+        quality: 3,
+        text: "I want to build a partnership with [PARTNER TYPE] to [GOAL]. My assets they'd value: [WHAT I BRING]. What I want from them: [WHAT I WANT]. Design the deal structure: mutual value proposition (from their POV, not mine), 3 possible deal formats from simple to complex, the minimum viable version to test first, the metrics that would make this worth expanding, and the red flags that mean I should walk away. Write the opening outreach message.",
+        vars: ["PARTNER TYPE", "GOAL", "WHAT I BRING", "WHAT I WANT"]
+      },
+      {
+        title: "Launch Sequence Architect",
+        quality: 4,
+        text: "I'm launching [PRODUCT/OFFER] at [PRICE] to [AUDIENCE SIZE] in [TIMEFRAME]. Design the launch sequence: pre-launch phase (content/email cadence to build anticipation without burning trust), open cart sequence (day 1 open, day 3 value add, day 5 objection handler, day 7 close — email for each), and post-launch (win-back for non-buyers, onboarding for buyers). For each email: subject line, core message, and the one psychological trigger it should activate.",
+        vars: ["PRODUCT/OFFER", "PRICE", "AUDIENCE SIZE", "TIMEFRAME"]
+      }
+    ]
+  }
+};
+
+let currentCat = 'all';
+
+function varify(text) {
+  return text.replace(/\[([^\]]+)\]/g, '<var>[$1]</var>');
+}
+
+function qualityDots(n) {
+  return '<div class="card-quality">' +
+    [1,2,3,4,5].map(i => `<span class="${i <= n ? 'filled' : ''}"></span>`).join('') +
+    '</div>';
+}
+
+function renderCard(p, idx) {
+  return `
+    <div class="card" onclick="copyCard(this, ${JSON.stringify(p.text).replace(/'/g,"&#39;")})">
+      <div class="card-top">
+        <span class="card-tag">Prompt ${String(idx+1).padStart(2,'0')}</span>
+        ${qualityDots(p.quality)}
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;color:#71717a;margin-bottom:-4px;">${p.title}</div>
+      <div class="card-body">${varify(p.text)}</div>
+      <div class="card-footer">
+        <span class="copy-label" data-label>Click to copy</span>
+        <div class="copy-btn">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderView(search = '') {
+  const q = search.toLowerCase();
+  const container = document.getElementById('viewContainer');
+  let html = '';
+  let total = 0;
+
+  const keys = currentCat === 'all' ? Object.keys(CATS) : [currentCat];
+
+  for (const key of keys) {
+    const cat = CATS[key];
+    const filtered = cat.prompts.filter(p =>
+      !q || p.title.toLowerCase().includes(q) || p.text.toLowerCase().includes(q)
+    );
+    if (!filtered.length) continue;
+
+    if (currentCat === 'all') {
+      html += `
+        <div class="cat-block">
+          <div class="cat-block-header">
+            <div class="cat-block-title">${cat.label} <em>${cat.italic}</em></div>
+            <span class="cat-block-count">${filtered.length} prompts</span>
+          </div>
+          <div class="grid">${filtered.map((p,i) => renderCard(p, cat.prompts.indexOf(p))).join('')}</div>
+        </div>`;
+    } else {
+      html += `
+        <div class="section-head">
+          <div class="section-title">${cat.label} <em>${cat.italic}</em></div>
+          <div class="section-desc">${cat.desc}</div>
+        </div>
+        <div class="section-rule"></div>
+        <div class="grid">${filtered.map((p,i) => renderCard(p,i)).join('')}</div>`;
+    }
+    total += filtered.length;
+  }
+
+  if (!total) html = '<div class="grid"><div class="no-results">No prompts match "' + search + '"</div></div>';
+
+  container.innerHTML = html;
+  document.getElementById('resultCount').textContent = total + ' prompt' + (total !== 1 ? 's' : '');
+}
+
+function switchCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('searchInput').value = '';
+  renderView();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function handleSearch() {
+  const q = document.getElementById('searchInput').value;
+  if (q) {
+    currentCat = 'all';
+    document.querySelectorAll('.nav-item').forEach((n,i) => n.classList.toggle('active', i===0));
+  }
+  renderView(q);
+}
+
+function copyToClipboard(text) {
+  // Try modern API first, fall back to execCommand
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  }
+  return Promise.resolve(legacyCopy(text));
+}
+
+function legacyCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function copyCard(card, text) {
+  copyToClipboard(text);
+  card.classList.add('copied');
+  const lbl = card.querySelector('[data-label]');
+  const btn = card.querySelector('.copy-btn');
+  lbl.textContent = 'Copied!';
+  btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+  setTimeout(() => {
+    card.classList.remove('copied');
+    lbl.textContent = 'Click to copy';
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+  }, 2500);
+}
+
+renderView();
+</script>
+</body>
+</html>
