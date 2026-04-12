@@ -622,7 +622,7 @@ body::after {
     <div class="nav-label">Categories</div>
 
     <div class="nav-item active" onclick="switchCat('all', this)">
-      All Prompts <span class="nav-count">60</span>
+      All Prompts <span class="nav-count">66</span>
     </div>
     <div class="nav-item" onclick="switchCat('thinking', this)">
       Strategic Thinking <span class="nav-count">8</span>
@@ -648,6 +648,9 @@ body::after {
     <div class="nav-item" onclick="switchCat('youtube', this)">
       YouTube <span class="nav-count">4</span>
     </div>
+    <div class="nav-item" onclick="switchCat('learning', this)">
+      Learning <span class="nav-count">6</span>
+    </div>
 
     <div style="height:1px;background:var(--border);margin:16px 24px;"></div>
     <div class="nav-label">Tools</div>
@@ -669,7 +672,7 @@ body::after {
         <span class="search-icon">⌕</span>
         <input class="search-input" type="text" id="searchInput" placeholder="Search prompts..." oninput="handleSearch()">
       </div>
-      <span class="result-count" id="resultCount">60 prompts</span>
+      <span class="result-count" id="resultCount">66 prompts</span>
     </div>
 
     <div id="viewContainer"></div>
@@ -1092,6 +1095,49 @@ const CATS = {
         quality: 5,
         text: "Watch this video, then help me think critically about it.\n\nWHO BENEFITS\nWho gains \u2014 financially, reputationally, or ideologically \u2014 if the audience believes this argument? Does the speaker benefit directly? State this plainly before anything else.\n\nTHE STEELMAN\nReconstruct the speaker\u2019s argument in its strongest possible form \u2014 better than they may have stated it themselves. What is the most compelling version of their position?\n\nTHE WEAK POINTS\nWhere does the argument rely on assumptions, selective evidence, emotional appeal, or logical gaps? Be specific \u2014 quote or reference the moment if possible.\n\nTHE BEST COUNTERARGUMENT\nWhat is the single strongest opposing argument that a well-informed critic would make? State it fairly, not as a strawman.\n\nTHE HIDDEN PREMISE\nWhat does the speaker have to believe is true for their conclusion to hold? State the 1\u20132 assumptions doing the most work underneath this argument.\n\nMY POSITION\nBased on the steelman and the critique \u2014 what would be a reasonable, defensible position for me to hold on this topic? Not \u2018both sides have merit.\u2019 Give a clear stance with a reason.",
         vars: []
+      }
+    ]
+  },
+  learning: {
+    label: "Learning",
+    italic: "& Mental Edge",
+    desc: "Use AI against yourself. Prompts that build sharper thinking, expose gaps, and force real understanding over passive consumption.",
+    prompts: [
+      {
+        title: "Zone 1 vs Zone 2 Audit",
+        quality: 5,
+        text: "Here is my current task list or weekly responsibilities:\n[PASTE YOUR FULL TASK LIST OR DESCRIBE YOUR WEEKLY WORK]\n\nClassify every item into two zones:\n\nZONE 1 \u2014 Capped payoff: tasks where no matter how good you get, the upside is limited. The outcome difference between 30 minutes and 3 hours is small. These should be delegated or minimized.\n\nZONE 2 \u2014 Uncapped payoff: tasks where being 1% better compounds into significantly larger results. Pricing, strategy, key relationships, product decisions, negotiations. These deserve the majority of my cognitive energy.\n\nFor each task: assign its zone, explain why in one sentence, and estimate what percentage of my current time it consumes.\n\nThen:\n\u2014 Which Zone 2 tasks am I currently underinvesting in relative to their payoff potential?\n\u2014 Which Zone 1 tasks am I treating as Zone 2 (spending disproportionate energy on low-ceiling work)?\n\u2014 Write a delegation brief for the top 3 Zone 1 tasks: what the task is, what good output looks like, and the exact instruction I\u2019d give to AI or a junior person to handle it.\n\nEnd with: if I reclaimed the time currently spent on Zone 1 and redirected it to my highest-leverage Zone 2 task, what would I do with it this week?",
+        vars: ["PASTE YOUR FULL TASK LIST OR DESCRIBE YOUR WEEKLY WORK"]
+      },
+      {
+        title: "Prompt Upgrade Workshop",
+        quality: 5,
+        text: "Here is a prompt I am currently using:\n[PASTE YOUR PROMPT]\n\nHere is the output it typically produces:\n[PASTE A TYPICAL OUTPUT OR DESCRIBE WHAT YOU GET]\n\nHere is what I actually want instead:\n[DESCRIBE THE IDEAL OUTPUT \u2014 format, depth, tone, structure]\n\nFirst, diagnose the prompt: what specifically is causing the gap between what I get and what I want? Is it missing role definition, no format constraints, insufficient examples, too much freedom, wrong framing, or something else?\n\nThen rewrite the prompt at four levels \u2014 show all four:\n\nLevel 1 \u2014 One-shot: Add one clear example of the output I want, embedded in the prompt.\n\nLevel 2 \u2014 Few-shot: Add three examples that together define the pattern, style, and boundaries of what I want.\n\nLevel 3 \u2014 Chain of thought: Restructure the prompt so the AI reasons step by step before producing the final output. Show where to insert the reasoning instruction and why.\n\nLevel 4 \u2014 Agent: Redesign the prompt so the AI simulates multiple roles working in sequence on the task. Define each role, its specific job, and the order they work.\n\nFor each level: explain what it unlocks that the previous level couldn\u2019t achieve.\n\nFinal recommendation: which level is the right fit for this specific use case, and why?",
+        vars: ["PASTE YOUR PROMPT", "PASTE A TYPICAL OUTPUT OR DESCRIBE WHAT YOU GET", "DESCRIBE THE IDEAL OUTPUT"]
+      },
+      {
+        title: "Socratic Drill",
+        quality: 5,
+        text: "I want to genuinely learn and be able to apply: [TOPIC OR SKILL]\n\nDo not explain it to me. Quiz me instead.\n\nRound 1 \u2014 Foundation: Ask me 3 questions a curious high school student should be able to answer about this topic. Wait for my responses before continuing.\n\nRound 2 \u2014 Application: Based on my Round 1 answers, ask 3 questions that require me to apply the concept to a real situation. If I got something wrong in Round 1, probe that gap directly.\n\nRound 3 \u2014 Expert pressure: Ask 2 questions an interviewer or senior practitioner would ask to separate someone who truly understands from someone who has just read about it.\n\nAfter each round: tell me what I got right, what I got wrong, what my answer revealed about my actual understanding, and what the correct answer is where I fell short.\n\nAt the end: give me a plain assessment \u2014 what do I actually understand well, where are the real gaps, and what is the single most important thing I should study next to go from surface knowledge to genuine competence?",
+        vars: ["TOPIC OR SKILL"]
+      },
+      {
+        title: "Concept Stress Test",
+        quality: 5,
+        text: "I believe I understand the following concept well enough to explain and apply it:\n[STATE THE CONCEPT AND WRITE WHAT YOU UNDERSTAND ABOUT IT]\n\nAct as a skeptical examiner. Your job is to find where my understanding breaks down \u2014 not to be hostile, but to find the exact boundary between what I genuinely know and what I\u2019m pattern-matching on without real comprehension.\n\nRound 1: Ask me 3 probing questions based on what I\u2019ve written. These should test whether I understand the mechanism, not just the surface definition.\n\nRound 2: Take the weakest part of my answer and push harder on it. Ask the follow-up question that exposes whether I truly get it or am just using the right words.\n\nRound 3: Give me a scenario or edge case where this concept behaves unexpectedly or breaks down. Ask me to reason through it.\n\nAfter all three rounds: give me a direct verdict \u2014 what do I actually understand, what am I faking, and what is the specific gap I need to close? Then fill in the gaps with a precise, no-padding explanation of only what I got wrong.",
+        vars: ["STATE THE CONCEPT AND WRITE WHAT YOU UNDERSTAND ABOUT IT"]
+      },
+      {
+        title: "Atomic Simplifier",
+        quality: 5,
+        text: "Here is the concept, argument, or piece of writing I want to truly understand:\n[PASTE THE CONCEPT, PARAGRAPH, FRAMEWORK, OR TOPIC]\n\nStrip it down in three passes. Do not skip passes or merge them.\n\nPass 1 \u2014 Smart teenager: Explain it to a bright 16-year-old who has no background in this field but is genuinely curious. Use real-world analogies. No jargon unless you immediately define it in plain terms. The goal: they could explain it to a friend.\n\nPass 2 \u2014 Curious 10-year-old: Strip away everything that isn\u2019t essential. Use only concrete, physical, tangible language. No abstractions without an immediate example they can picture. The goal: the core idea survives without any assumed knowledge.\n\nPass 3 \u2014 One sentence: Reduce the entire concept to a single sentence a 6-year-old could repeat and roughly understand. This is the atomic unit \u2014 the irreducible core.\n\nAfter the three passes: tell me what was lost in each simplification that actually matters. What nuance or detail is important enough that I should add it back once I have the core? What does the full complexity buy me that the simple version doesn\u2019t?\n\nFinal check: if I can only remember one thing from this concept a year from now, what should it be?",
+        vars: ["PASTE THE CONCEPT, PARAGRAPH, FRAMEWORK, OR TOPIC"]
+      },
+      {
+        title: "Embarrassing Questions Safe Room",
+        quality: 5,
+        text: "I want to genuinely understand [TOPIC OR CONCEPT] but I feel like I should already know more than I do about it. No judgment. Start from absolute zero.\n\nDo the following:\n\nLayer 1 \u2014 Ground zero: Explain it as if I know nothing. Not \u201Cbasically\u201D or \u201Csimply\u201D \u2014 actually nothing. Define every term you use before using it. Use one concrete real-world example that makes the concept tangible before anything else.\n\nLayer 2 \u2014 Why it matters: Now that I have the base, tell me why anyone cares about this. What breaks or gets worse when people don\u2019t understand it? What gets better when they do? Make the stakes real.\n\nLayer 3 \u2014 Common confusion: What do most people get wrong or misunderstand about this? What\u2019s the thing that sounds right but isn\u2019t? What question do smart people ask that reveals they\u2019re still confused?\n\nLayer 4 \u2014 How it connects: What does this concept sit next to? What should I understand before this, and what does understanding this unlock next? Give me a sense of where this fits in the larger map.\n\nLayer 5 \u2014 Test my understanding: Ask me one question that a person who truly understands this would be able to answer without hesitation. Just one. Then wait for my answer before telling me if I\u2019ve got it.",
+        vars: ["TOPIC OR CONCEPT"]
       }
     ]
   }
