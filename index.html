@@ -622,7 +622,7 @@ body::after {
     <div class="nav-label">Categories</div>
 
     <div class="nav-item active" onclick="switchCat('all', this)">
-      All Prompts <span class="nav-count">56</span>
+      All Prompts <span class="nav-count">60</span>
     </div>
     <div class="nav-item" onclick="switchCat('thinking', this)">
       Strategic Thinking <span class="nav-count">8</span>
@@ -645,6 +645,9 @@ body::after {
     <div class="nav-item" onclick="switchCat('growth', this)">
       Growth &amp; Revenue <span class="nav-count">8</span>
     </div>
+    <div class="nav-item" onclick="switchCat('youtube', this)">
+      YouTube <span class="nav-count">4</span>
+    </div>
 
     <div style="height:1px;background:var(--border);margin:16px 24px;"></div>
     <div class="nav-label">Tools</div>
@@ -666,7 +669,7 @@ body::after {
         <span class="search-icon">⌕</span>
         <input class="search-input" type="text" id="searchInput" placeholder="Search prompts..." oninput="handleSearch()">
       </div>
-      <span class="result-count" id="resultCount">56 prompts</span>
+      <span class="result-count" id="resultCount">60 prompts</span>
     </div>
 
     <div id="viewContainer"></div>
@@ -1058,6 +1061,37 @@ const CATS = {
         quality: 5,
         text: "I'm launching [PRODUCT/OFFER] at [PRICE] to [AUDIENCE SIZE] in [TIMEFRAME].\n\nMy audience relationship: [HOW WARM IS THE LIST — do they know you, have they bought before?].\n\nDesign the full launch sequence:\n\nPre-launch (2 weeks before): 3–4 content/email pieces that build desire without burning trust. What's the through-line narrative?\n\nOpen cart sequence:\n— Day 1 (Open): The launch email. Hook, what it is, why now, clear CTA.\n— Day 3 (Value add): Give something free that makes the paid offer more desirable.\n— Day 5 (Objection handler): Address the one objection stopping the fence-sitters.\n— Day 7 (Close): Urgency that's real, not manufactured. The final ask.\n\nPost-launch:\n— Win-back for non-buyers (2 emails): they didn't buy this time — keep the relationship\n— Onboarding for buyers (Day 1 and Day 7): make them feel the decision was right\n\nFor each email: subject line, core message in 2 sentences, the one psychological principle at work, and the CTA.",
         vars: ["PRODUCT/OFFER", "PRICE", "AUDIENCE SIZE", "TIMEFRAME", "HOW WARM IS THE LIST"]
+      }
+    ]
+  },
+  youtube: {
+    label: "YouTube",
+    italic: "& Video Intelligence",
+    desc: "Extract maximum value from video content. Adaptive prompts that classify and deeply analyze any video type.",
+    prompts: [
+      {
+        title: "Video Intelligence Extractor",
+        quality: 5,
+        text: "Watch this video carefully, then do the following:\n\nSTEP 1 — Classify the video\nIdentify which type it is: Business/Learning | Book Review | Concept Explanation | Scientific/Research | News | Political/Opinion | Documentary | Other. State it in one line.\n\nSTEP 2 — Core extraction (adapt based on type)\n\nIf Business/Learning:\n- Central argument or framework in one sentence\n- Key ideas (max 5, each explained in 2\u20133 sentences \u2014 not just labels)\n- Actionable takeaways I can apply\n- What the speaker assumes the audience already knows\n- Any claim that seemed weak or unsupported\n\nIf Book Review:\n- Book\u2019s core thesis in 2\u20133 sentences\n- Reviewer\u2019s overall verdict and why\n- 3\u20135 specific ideas from the book that the reviewer highlights\n- Who the reviewer thinks should read it (and who shouldn\u2019t)\n- Any disagreement or critique the reviewer raises\n\nIf Concept Explanation:\n- The concept defined in plain language (as if explaining to a smart non-expert)\n- The best analogy or example used\n- Why this concept matters \u2014 real-world implications\n- Common misconceptions the video addresses\n- What I\u2019d need to learn next to go deeper\n\nIf Scientific/Research:\n- What question the research is trying to answer\n- How they studied it (methodology in simple terms)\n- What they found\n- What it actually means in practice\n- Limitations or caveats mentioned\n- Confidence level: is this preliminary or well-established?\n\nIf News:\n- What happened (who, what, where, when)\n- Why it happened \u2014 root causes or context\n- Who is affected and how\n- What happens next \u2014 stated or implied\n- Any missing context or perspective I should be aware of\n\nIf Political/Opinion:\n- The speaker\u2019s position stated plainly\n- The 3 strongest arguments they make\n- Any evidence or data cited\n- What opposing view they address (if any) \u2014 and how fairly\n- What they want the audience to think, feel, or do\n\nSTEP 3 — One-paragraph verdict\nIn your own words: what is the single most valuable thing in this video, and is it worth my time to revisit or share?",
+        vars: []
+      },
+      {
+        title: "Beyond the Surface",
+        quality: 5,
+        text: "Watch this video carefully, then go deeper than a summary.\n\nWHAT WAS SAID\nState the speaker\u2019s main argument and supporting points in 3\u20135 sentences. Be precise, not general.\n\nWHAT WASN\u2019T SAID\nWhat important context, counterevidence, or alternative perspectives did the speaker leave out \u2014 intentionally or not? Be specific about the gaps.\n\nWHAT\u2019S CONTESTED\nWhich claims in this video are genuinely debated among experts or informed people? Flag anything presented as settled that isn\u2019t.\n\nVERIFY OR TRUST?\nFor the 3 most important claims made: is each well-established, plausible but unverified, or questionable? Cite what I\u2019d need to check.\n\nGO DEEPER\nIf I wanted to understand this topic at a serious level, what would I read, watch, or study next? Give me 2\u20133 specific directions, not generic advice.",
+        vars: []
+      },
+      {
+        title: "Extract Actions Only",
+        quality: 5,
+        text: "Watch this video. Ignore everything except what I can actually do.\n\nExtract only:\n- Concrete actions, steps, or methods shown or recommended\n- In the exact order they should be done (if order matters)\n- With any specific details mentioned (tools, numbers, settings, names)\n- Flag any step where the video was vague or skipped detail\n\nFormat as a numbered checklist. No summaries, no opinions, no background \u2014 only what I can act on. If the video contains no actionable content, say so directly.",
+        vars: []
+      },
+      {
+        title: "Steelman & Challenge",
+        quality: 5,
+        text: "Watch this video, then help me think critically about it.\n\nTHE STEELMAN\nReconstruct the speaker\u2019s argument in its strongest possible form \u2014 better than they may have stated it themselves. What is the most compelling version of their position?\n\nTHE WEAK POINTS\nWhere does the argument rely on assumptions, selective evidence, emotional appeal, or logical gaps? Be specific \u2014 quote or reference the moment if possible.\n\nTHE BEST COUNTERARGUMENT\nWhat is the single strongest opposing argument that a well-informed critic would make? State it fairly, not as a strawman.\n\nTHE HIDDEN PREMISE\nWhat does the speaker have to believe is true for their conclusion to hold? State the 1\u20132 assumptions doing the most work underneath this argument.\n\nMY POSITION\nBased on the steelman and the critique \u2014 what would be a reasonable, defensible position for me to hold on this topic?",
+        vars: []
       }
     ]
   }
