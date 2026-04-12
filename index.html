@@ -429,6 +429,169 @@ body::after {
   letter-spacing: 0.06em;
 }
 
+/* ── Agent Builder ── */
+.builder-section { margin-bottom: 24px; }
+
+.builder-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-mid);
+  margin-bottom: 10px;
+}
+
+.builder-label span { color: var(--text-dim); }
+
+.builder-textarea {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 11px 16px;
+  font-family: 'Crimson Pro', serif;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+  resize: vertical;
+  min-height: 72px;
+}
+
+.builder-textarea::placeholder { color: var(--text-dim); }
+.builder-textarea:focus { border-color: var(--accent); }
+
+.builder-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.builder-option {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  color: var(--text-mid);
+  letter-spacing: 0.04em;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.builder-option:hover { border-color: var(--border-hover); color: var(--text); }
+.builder-option.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.role-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 18px 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.role-card.role-researcher::before { background: #3b82f6; }
+.role-card.role-analyst::before   { background: #22c55e; }
+.role-card.role-advisor::before   { background: #f59e0b; }
+
+.role-card-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.role-researcher .role-card-title { color: #3b82f6; }
+.role-analyst .role-card-title    { color: #22c55e; }
+.role-advisor .role-card-title    { color: #f59e0b; }
+
+.role-card-body {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--text-mid);
+  font-weight: 300;
+}
+
+.prompt-preview {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 12px;
+  position: relative;
+  overflow: hidden;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.prompt-preview::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.prompt-preview-text {
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: var(--text-mid);
+  font-weight: 300;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'Crimson Pro', serif;
+}
+
+.builder-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.builder-copy-btn:hover { transform: scale(1.03); }
+.builder-copy-btn.copied { background: var(--green); }
+
+.builder-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.builder-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 8px 0 28px;
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .shell { grid-template-columns: 1fr; }
@@ -439,6 +602,9 @@ body::after {
   .nav-item.active { border-bottom-color: var(--accent); border-left-color: transparent; }
   .main { padding: 24px 20px 60px; }
   .grid { grid-template-columns: 1fr; }
+  .role-grid { grid-template-columns: 1fr; }
+  .builder-options { grid-template-columns: repeat(2, 1fr); }
+  .builder-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -478,6 +644,12 @@ body::after {
     </div>
     <div class="nav-item" onclick="switchCat('growth', this)">
       Growth &amp; Revenue <span class="nav-count">8</span>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin:16px 24px;"></div>
+    <div class="nav-label">Tools</div>
+    <div class="nav-item" onclick="switchToBuilder(this)">
+      Agent Builder <span class="nav-count" style="background:rgba(59,130,246,0.2);color:#3b82f6;">NEW</span>
     </div>
 
     <div class="sidebar-footer">
@@ -892,6 +1064,68 @@ const CATS = {
 };
 
 let currentCat = 'all';
+let isBuilderActive = false;
+let builderCat = 'competitor';
+let builderFormat = 'structured';
+
+const BUILDER_ROLES = {
+  competitor: {
+    label: 'Competitor Intelligence',
+    researcher: 'specialist in Myanmar\'s medical device market, competitive landscape, and distributor intelligence',
+    analyst: 'expert in competitive positioning, pricing dynamics, and market share analysis for orthopedic implant distributors',
+    advisor: 'senior business strategist with deep experience in medical device distribution in Southeast Asia'
+  },
+  supplier: {
+    label: 'Supplier Evaluation',
+    researcher: 'specialist in Chinese and global orthopedic implant manufacturers, certifications, regulatory requirements, and distribution terms',
+    analyst: 'expert in supplier risk assessment, margin analysis, and distribution partnership evaluation',
+    advisor: 'senior procurement and partnerships strategist for medical device companies'
+  },
+  pricing: {
+    label: 'Pricing Strategy',
+    researcher: 'specialist in Myanmar medical device market pricing, surgeon price sensitivity, and hospital procurement patterns',
+    analyst: 'expert in pricing strategy, margin optimization, and competitive price positioning for medical implants',
+    advisor: 'senior pricing strategist with experience in emerging market medical device distribution'
+  },
+  market: {
+    label: 'Market Opportunity',
+    researcher: 'specialist in Myanmar healthcare infrastructure, hospital growth, surgeon demographics, and unmet orthopedic needs',
+    analyst: 'expert in market sizing, opportunity assessment, and revenue forecasting for medical device distribution',
+    advisor: 'senior market entry and growth strategist for Southeast Asian healthcare markets'
+  },
+  ops: {
+    label: 'Operations',
+    researcher: 'specialist in import logistics, supply chain management, and regulatory compliance for medical devices in Myanmar',
+    analyst: 'expert in operational efficiency, workflow bottlenecks, and cost structure analysis for distribution businesses',
+    advisor: 'senior operations strategist with experience running medical device distribution in frontier markets'
+  },
+  financial: {
+    label: 'Financial Analysis',
+    researcher: 'specialist in financial data interpretation, ratio analysis, and benchmarking for distribution businesses',
+    analyst: 'expert in cash flow analysis, working capital management, and financial health assessment for SMEs',
+    advisor: 'senior financial advisor for privately held distribution businesses in emerging markets'
+  },
+  partner: {
+    label: 'Partner / Hospital',
+    researcher: 'specialist in Myanmar hospital systems, surgeon relationships, procurement committees, and hospital buying behavior',
+    analyst: 'expert in account-based strategy, relationship mapping, and hospital penetration analysis for medical device distributors',
+    advisor: 'senior key account strategist with deep experience in hospital-facing medical device sales'
+  },
+  custom: {
+    label: 'Custom',
+    researcher: 'specialist with broad knowledge relevant to this task',
+    analyst: 'expert analyst focused on identifying patterns, risks, and opportunities in the information gathered',
+    advisor: 'senior strategic advisor focused on practical, high-impact recommendations'
+  }
+};
+
+const BUILDER_FORMATS = {
+  structured:     { label: 'Structured Report',   instruction: 'Present your output as a structured report with clear section headings and bullet points under each section.' },
+  brief:          { label: 'Executive Brief',      instruction: 'Present your output as a tight executive brief \u2014 maximum one page equivalent. Lead with the key finding, then evidence, then recommendation.' },
+  table:          { label: 'Comparison Table',     instruction: 'Present your core output as a comparison table with clear row and column labels. Add a brief paragraph of interpretation below the table.' },
+  recommendation: { label: 'Recommendation',      instruction: 'Present a single clear recommendation. Structure it as: Recommendation \u2192 Rationale \u2192 Key risks \u2192 One next action.' },
+  options:        { label: '3 Options + Tradeoffs', instruction: 'Present exactly 3 options. For each: label it, state what it involves, list the upside, list the downside, and give your preferred option with reasoning.' }
+};
 
 function varify(text) {
   return text.replace(/\[([^\]]+)\]/g, '<var>[$1]</var>');
@@ -968,10 +1202,12 @@ function renderView(search = '') {
 }
 
 function switchCat(cat, el) {
+  isBuilderActive = false;
   currentCat = cat;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('searchInput').value = '';
+  document.querySelector('.topbar').style.display = '';
   renderView();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1016,6 +1252,169 @@ function copyCard(card, text) {
     card.classList.remove('copied');
     lbl.textContent = 'Click to copy';
     btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+  }, 2500);
+}
+
+// ── Agent Builder ──
+
+function switchToBuilder(el) {
+  isBuilderActive = true;
+  currentCat = null;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelector('.topbar').style.display = 'none';
+  renderBuilder();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderBuilder() {
+  const container = document.getElementById('viewContainer');
+  const cat = BUILDER_ROLES[builderCat];
+
+  let catHtml = Object.entries(BUILDER_ROLES).map(([key, val]) =>
+    `<div class="builder-option${key === builderCat ? ' selected' : ''}" onclick="selectBuilderCat('${key}')">${val.label}</div>`
+  ).join('');
+
+  let fmtHtml = Object.entries(BUILDER_FORMATS).map(([key, val]) =>
+    `<div class="builder-option${key === builderFormat ? ' selected' : ''}" onclick="selectBuilderFormat('${key}')">${val.label}</div>`
+  ).join('');
+
+  container.innerHTML = `
+    <div class="section-head">
+      <div class="section-title">Agent <em>Builder</em></div>
+      <div class="section-desc">Three expert roles — Researcher, Analyst, Advisor — working in sequence. Zillion context is pre-loaded. Fill in your task and copy the prompt.</div>
+    </div>
+    <div class="section-rule"></div>
+
+    <div class="builder-section">
+      <div class="builder-label">Analysis Category</div>
+      <div class="builder-options" id="builderCatOptions"></div>
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">Output Format</div>
+      <div class="builder-options" id="builderFormatOptions"></div>
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">What is the specific question or task?</div>
+      <textarea class="builder-textarea" id="builderTask" rows="3" placeholder="e.g. Mindray is now offering knee implants in Mandalay at 30% below our price. What should we do?"></textarea>
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">Relevant context <span>(optional — numbers, names, constraints)</span></div>
+      <textarea class="builder-textarea" id="builderContext" rows="2" placeholder="e.g. Our current knee margin is 18%. Mindray is backed by a local partner with hospital access."></textarea>
+    </div>
+
+    <button class="builder-copy-btn" onclick="generateAndCopyPrompt()" id="builderGenBtn">Generate & Copy Prompt</button>
+
+    <div class="builder-divider" style="margin-top:28px;"></div>
+
+    <div class="builder-label">Active Roles</div>
+    <div class="role-grid" id="builderRoleGrid"></div>
+
+    <div id="promptPreviewWrap" style="display:none;margin-top:28px;">
+      <div class="builder-label">Generated Prompt</div>
+      <div class="prompt-preview">
+        <div class="prompt-preview-text" id="promptPreviewText"></div>
+      </div>
+    </div>
+  `;
+
+  // Populate category options via DOM
+  const catContainer = document.getElementById('builderCatOptions');
+  Object.entries(BUILDER_ROLES).forEach(([key, val]) => {
+    const div = document.createElement('div');
+    div.className = 'builder-option' + (key === builderCat ? ' selected' : '');
+    div.textContent = val.label;
+    div.onclick = () => selectBuilderCat(key);
+    catContainer.appendChild(div);
+  });
+
+  // Populate format options via DOM
+  const fmtContainer = document.getElementById('builderFormatOptions');
+  Object.entries(BUILDER_FORMATS).forEach(([key, val]) => {
+    const div = document.createElement('div');
+    div.className = 'builder-option' + (key === builderFormat ? ' selected' : '');
+    div.textContent = val.label;
+    div.onclick = () => selectBuilderFormat(key);
+    fmtContainer.appendChild(div);
+  });
+
+  // Populate role cards via DOM
+  const roleGrid = document.getElementById('builderRoleGrid');
+  [
+    { key: 'researcher', label: 'Researcher', cls: 'role-researcher' },
+    { key: 'analyst',    label: 'Analyst',    cls: 'role-analyst' },
+    { key: 'advisor',    label: 'Advisor',    cls: 'role-advisor' }
+  ].forEach(({ key, label, cls }) => {
+    const card = document.createElement('div');
+    card.className = 'role-card ' + cls;
+    const title = document.createElement('div');
+    title.className = 'role-card-title';
+    title.textContent = label;
+    const body = document.createElement('div');
+    body.className = 'role-card-body';
+    body.textContent = cat[key];
+    card.appendChild(title);
+    card.appendChild(body);
+    roleGrid.appendChild(card);
+  });
+}
+
+function selectBuilderCat(key) {
+  const task = document.getElementById('builderTask')?.value || '';
+  const ctx = document.getElementById('builderContext')?.value || '';
+  builderCat = key;
+  renderBuilder();
+  document.getElementById('builderTask').value = task;
+  document.getElementById('builderContext').value = ctx;
+}
+
+function selectBuilderFormat(key) {
+  const task = document.getElementById('builderTask')?.value || '';
+  const ctx = document.getElementById('builderContext')?.value || '';
+  builderFormat = key;
+  renderBuilder();
+  document.getElementById('builderTask').value = task;
+  document.getElementById('builderContext').value = ctx;
+}
+
+function buildPrompt() {
+  const r = BUILDER_ROLES[builderCat];
+  const fmt = BUILDER_FORMATS[builderFormat];
+  const task = document.getElementById('builderTask').value.trim();
+  const context = document.getElementById('builderContext').value.trim();
+
+  if (!task) return null;
+
+  const ctxLine = context ? '\n\nAdditional context:\n' + context : '';
+
+  return 'You are three expert specialists working together as a team on behalf of Zillion \u2014 a medical device distribution company in Myanmar specializing in orthopedic implants (hip, knee, spine) and surgical instruments, operating in Yangon and Mandalay with ~35 employees. Zillion\u2019s strengths are customer support, technical service, and operational efficiency. Key challenges include war-related import delays, cash constraints, increasing competition, and a difficult operating environment.\n\nThe three team members are:\n\nRESEARCHER \u2014 A ' + r.researcher + '. Your job is to gather, organize, and present all relevant facts, context, and background needed to understand this problem fully. Be specific. Surface what is known, what is uncertain, and what gaps exist.\n\nANALYST \u2014 A ' + r.analyst + '. Your job is to examine the information the Researcher surfaces, identify patterns, risks, and opportunities, and produce a clear-eyed analysis. Avoid generalities \u2014 be precise about implications for Zillion specifically.\n\nADVISOR \u2014 A ' + r.advisor + '. Your job is to synthesize the Researcher\u2019s facts and the Analyst\u2019s findings into concrete, actionable guidance for Zillion\u2019s leadership. Be direct. Prioritize what matters most right now.\n\n---\n\nTASK:\n' + task + ctxLine + '\n\n---\n\nWork through this as a team in sequence: Researcher first, then Analyst, then Advisor. Label each section clearly.\n\n' + fmt.instruction;
+}
+
+function generateAndCopyPrompt() {
+  const prompt = buildPrompt();
+  if (!prompt) {
+    const ta = document.getElementById('builderTask');
+    ta.style.borderColor = '#ef4444';
+    ta.focus();
+    setTimeout(() => ta.style.borderColor = '', 1500);
+    return;
+  }
+
+  const wrap = document.getElementById('promptPreviewWrap');
+  const text = document.getElementById('promptPreviewText');
+  wrap.style.display = 'block';
+  text.textContent = prompt;
+
+  const btn = document.getElementById('builderGenBtn');
+  copyToClipboard(prompt);
+  btn.textContent = 'Copied!';
+  btn.classList.add('copied');
+  setTimeout(() => {
+    btn.textContent = 'Generate & Copy Prompt';
+    btn.classList.remove('copied');
   }, 2500);
 }
 
